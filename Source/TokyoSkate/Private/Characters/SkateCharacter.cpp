@@ -18,14 +18,18 @@ ASkateCharacter::ASkateCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
     // Remove after importing the character
-    GetMesh()->DestroyComponent();
+    GetMesh()->DestroyComponent();      //nvm it will probably make bugs
 
-    MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SkateMesh"));
-    MeshComponent->SetupAttachment(RootComponent);
-    MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
+    SkeletalMesh->SetupAttachment(RootComponent);
+    SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+    SkateMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SkateMesh"));
+    SkateMesh->SetupAttachment(SkeletalMesh);
+    SkateMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
     FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-    FollowCamera->SetupAttachment(MeshComponent);
+    FollowCamera->SetupAttachment(SkateMesh);
     FollowCamera->SetRelativeLocation(FVector(-100.f, 0, 150.f));
 
     GetCharacterMovement()->bOrientRotationToMovement = true;
