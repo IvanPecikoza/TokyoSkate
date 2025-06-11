@@ -4,12 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+
 #include "SkateCharacter.generated.h"
 
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBoostCooldownChanged, bool, bIsInCooldown);
 
 UCLASS()
 class TOKYOSKATE_API ASkateCharacter : public ACharacter
@@ -19,6 +22,10 @@ class TOKYOSKATE_API ASkateCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ASkateCharacter();
+
+
+	UPROPERTY(BlueprintAssignable, Category = "Animation")
+	FOnBoostCooldownChanged OnBoostCooldownChanged;
 
 protected:
 	// Called when the game starts or when spawned
@@ -103,6 +110,7 @@ protected:
 	//Jump
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float JumpHeight = 500.f;
+
 
 
 	// Input handlers

@@ -119,7 +119,7 @@ void ASkateCharacter::OnBoostStarted()
 
 void ASkateCharacter::OnBoostEnded()
 {
-    if (!bCanBoost) return;
+    if (!bCanBoost || !GetCharacterMovement()->IsMovingOnGround()) return;
 
     GetWorld()->GetTimerManager().ClearTimer(BoostHoldTimer);
 
@@ -132,13 +132,15 @@ void ASkateCharacter::OnBoostEnded()
     );
 
     bCanBoost = false;
+
     GetWorld()->GetTimerManager().SetTimer(
         BoostCooldownTimer,
-        [this]() { bCanBoost = true; },
+        [this]() { bCanBoost = true; OnBoostCooldownChanged.Broadcast(false); },
         BoostCooldown,
         false
     );
 }
+
 
 void ASkateCharacter::OnMoveForward()
 {
