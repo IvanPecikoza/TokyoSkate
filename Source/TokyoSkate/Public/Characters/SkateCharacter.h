@@ -90,6 +90,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float BoostPower = 2400.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float MaxAllowedSpeed = 900.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float MinBoostMolitplier = 0.6f;
+
 
 	//Breaking params
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
@@ -123,6 +129,7 @@ protected:
 	void OnStopBreaking();
 	void OnTurnRight();
 	void OnTurnLeft();
+	void HandleTurning(float TurnInput);
 	void OnJump();
 
 
@@ -134,6 +141,8 @@ private:
 	float CurrentBoostTime = 0.f;
 	float CurrentSpeedDropoff = 1.f;
 	float CurrentBoostHoldTime = 0.f;
+	
+
 	
 
 	bool isMovingForward = false;

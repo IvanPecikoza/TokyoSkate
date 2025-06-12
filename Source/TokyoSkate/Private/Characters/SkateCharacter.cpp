@@ -40,6 +40,10 @@ ASkateCharacter::ASkateCharacter()
     GetCharacterMovement()->MaxWalkSpeed = 200.f;
     GetCharacterMovement()->BrakingDecelerationWalking = 200.f;
     GetCharacterMovement()->BrakingDecelerationFalling = 300.f;
+    GetCharacterMovement()->AirControl = 0.3f;
+    GetCharacterMovement()->AirControlBoostMultiplier = .1f;
+    GetCharacterMovement()->AirControlBoostVelocityThreshold = 100.f;
+
 
 }
 
@@ -119,20 +123,37 @@ void ASkateCharacter::OnBoostStarted()
 
 void ASkateCharacter::OnBoostEnded()
 {
-    if (!bCanBoost || !GetCharacterMovement()->IsMovingOnGround()) return;
+    if (!bCanBoost || !GetCharacterMovement()->IsMovingOnGround() || CurrentBoostHoldTime <= MinBoostDuration)
+        return;
 
     GetWorld()->GetTimerManager().ClearTimer(BoostHoldTimer);
 
-    float BoostStrength = FMath::Clamp(CurrentBoostHoldTime, MinBoostDuration, MaxBoostDuration);
+    // Calculate boost strength
+    const float BoostStrength = FMath::Clamp(CurrentBoostHoldTime, MinBoostMolitplier, MaxBoostDuration);
+    const FVector BoostImpulse = GetActorForwardVector() * BoostStrength * BoostPower;
 
-    // Apply single impulse
-    GetCharacterMovement()->AddImpulse(
-        GetActorForwardVector() * BoostStrength * BoostPower,
-        true
-    );
+    // Get current velocity (horizontal only)
+    const FVector CurrentVelocity = GetVelocity();
+    const float CurrentSpeed = FVector(CurrentVelocity.X, CurrentVelocity.Y, 0).Size();
+
+    // Define speed limits
+    const float SpeedAfterBoost = CurrentSpeed + (BoostImpulse.Size() / GetCharacterMovement()->Mass);
+
+    // Apply reduced boost if over threshold
+    if (SpeedAfterBoost > MaxAllowedSpeed)
+    {
+        const float ReductionFactor = (MaxAllowedSpeed - CurrentSpeed) / (BoostImpulse.Size() / GetCharacterMovement()->Mass);
+        const FVector ClampedImpulse = BoostImpulse * FMath::Max(0, ReductionFactor);
+
+        GetCharacterMovement()->AddImpulse(ClampedImpulse, true);
+        UE_LOG(LogTemp, Warning, TEXT("Boost clamped to avoid overspeed! Applied: %.1f"), ClampedImpulse.Size());
+    }
+    else
+    {
+        GetCharacterMovement()->AddImpulse(BoostImpulse, true);
+    }
 
     bCanBoost = false;
-
     OnBoostCooldownChanged.Broadcast(true);
 
     GetWorld()->GetTimerManager().SetTimer(
@@ -166,40 +187,32 @@ void ASkateCharacter::OnStopBreaking()
 
 void ASkateCharacter::OnTurnLeft()
 {
-    AddControllerYawInput(-1.f * TurnRate * GetWorld()->GetDeltaSeconds());
-
-    const FVector CurrentVelocity = GetVelocity();
-    const float CurrentSpeed = CurrentVelocity.Size();
-
-    const FRotator CurrentRot = GetActorRotation();
-    const FRotator TargetRot = CurrentRot + FRotator(0, -1 * TurnRate * GetWorld()->GetDeltaSeconds(), 0);
-
-    // Redirect velocity while preserving magnitude
-    const FVector NewDirection = TargetRot.Vector();
-    const FVector NewVelocity = NewDirection * CurrentSpeed;
-
-    GetCharacterMovement()->Velocity = NewVelocity;
-
-    SetActorRotation(TargetRot);
+    const float TurnInput = -1.f; // Left turn
+    HandleTurning(TurnInput);
 }
 
 void ASkateCharacter::OnTurnRight()
 {
-    AddControllerYawInput(1.f * TurnRate * GetWorld()->GetDeltaSeconds());
+    const float TurnInput = 1.f; // Right turn
+    HandleTurning(TurnInput);
+}
 
-    const FVector CurrentVelocity = GetVelocity();
-    const float CurrentSpeed = CurrentVelocity.Size();
-
-    const FRotator CurrentRot = GetActorRotation();
-    const FRotator TargetRot = CurrentRot + FRotator(0, 1 * TurnRate * GetWorld()->GetDeltaSeconds(), 0);
-
-    // Redirect velocity while preserving magnitude
-    const FVector NewDirection = TargetRot.Vector();
-    const FVector NewVelocity = NewDirection * CurrentSpeed;
-
-    GetCharacterMovement()->Velocity = NewVelocity;
-
-    SetActorRotation(TargetRot);
+void ASkateCharacter::HandleTurning(float TurnInput)
+{
+    //if (GetCharacterMovement()->IsMovingOnGround())
+    {
+        const FVector AdjustedVelocity = GetActorForwardVector() * GetVelocity().Size2D();
+        GetCharacterMovement()->Velocity = FVector(
+            AdjustedVelocity.X,
+            AdjustedVelocity.Y,
+            GetCharacterMovement()->Velocity.Z // Preserve Z
+        );
+        AddControllerYawInput(TurnInput * TurnRate * GetWorld()->GetDeltaSeconds());
+    }
+    //else // Air control
+    //{
+    //    AddControllerYawInput(TurnInput * TurnRate * 1.f * GetWorld()->GetDeltaSeconds());
+    //}
 }
 
 
