@@ -177,23 +177,77 @@ void ASkateCharacter::OnStopMovingForward()
 
 void ASkateCharacter::OnStartBreaking()
 {
-    isBreaking = true;
+    if (bIsBreaking || !GetCharacterMovement()->IsMovingOnGround())
+        return;
+
+    bIsBreaking = true;
+
+    // Calculate breaking duration based on current speed
+    const float CurrentSpeed = GetVelocity().Size2D();
+    const float SpeedRatio = FMath::Clamp(CurrentSpeed / GetCharacterMovement()->MaxWalkSpeed, 0.1f, 1.0f);
+    const float ActualBreakingTime = MaxBreakingLength * SpeedRatio;
+
+    // Apply immediate friction
+    GetCharacterMovement()->BrakingDecelerationWalking += BreakingFriction * 1000.f;
+
+    // Set up gradual breaking
+    GetWorld()->GetTimerManager().SetTimer(
+        BreakingTimer,
+        this,
+        &ASkateCharacter::ApplyBreakingForce,
+        0.016f, // ~60fps update
+        true
+    );
+
+    // Auto-stop timer
+    /*GetWorld()->GetTimerManager().SetTimer(
+        BreakingCooldownTimer,
+        [this]() {
+            StopBreaking();
+        },
+        ActualBreakingTime,
+        false
+    );*/
 }
 
 void ASkateCharacter::OnStopBreaking()
 {
-    isBreaking = false;
+    if (!bIsBreaking) return;
+
+    GetWorld()->GetTimerManager().ClearTimer(BreakingTimer);
+    GetCharacterMovement()->BrakingDecelerationWalking -= BreakingFriction * 1000.f;
+    bIsBreaking = false;
+}
+
+void ASkateCharacter::ApplyBreakingForce()
+{
+    if (!bIsBreaking) return;
+
+    const FVector CurrentVelocity = GetVelocity();
+    const float CurrentSpeed = CurrentVelocity.Size2D();
+
+    if (CurrentSpeed < 10.f) // Nearly stopped
+    {
+        OnStopBreaking();
+        return;
+    }
+
+    // Calculate new velocity (linear reduction)
+    const float SpeedReduction = (GetCharacterMovement()->MaxWalkSpeed / MaxBreakingLength) * 0.016f;
+    const FVector NewVelocity = CurrentVelocity.GetSafeNormal() * FMath::Max(0, CurrentSpeed - SpeedReduction);
+
+    GetCharacterMovement()->Velocity = NewVelocity;
 }
 
 void ASkateCharacter::OnTurnLeft()
 {
-    const float TurnInput = -1.f; // Left turn
+    const float TurnInput = -1.f;
     HandleTurning(TurnInput);
 }
 
 void ASkateCharacter::OnTurnRight()
 {
-    const float TurnInput = 1.f; // Right turn
+    const float TurnInput = 1.f;
     HandleTurning(TurnInput);
 }
 

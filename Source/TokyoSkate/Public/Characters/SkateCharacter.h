@@ -107,6 +107,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float DefaultDeceleration = 1100;
 
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float MaxBreakingLength = 2.0f; // Time to brake from max speed to zero
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float BreakingFriction = 2.0f; // Additional friction during brake
+
+	FTimerHandle BreakingTimer;
+	bool bIsBreaking = false;
+
+	UFUNCTION()
+	void ApplyBreakingForce();
+
 
 	// Turning
 	UPROPERTY(EditAnywhere, Category = "Movement")
