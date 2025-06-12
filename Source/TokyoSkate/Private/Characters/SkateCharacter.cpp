@@ -48,11 +48,7 @@ ASkateCharacter::ASkateCharacter()
 
 }
 
-void ASkateCharacter::Restart()
-{
-    UE_LOG(LogTemp, Warning, TEXT("ENHANCED INPUT WORKING"));
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("INPUT CONFIRMED"));
-}
+
 
 // Called when the game starts or when spawned
 void ASkateCharacter::BeginPlay()
@@ -97,8 +93,6 @@ void ASkateCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
         EnhancedInput->BindAction(TurnLeftAction, ETriggerEvent::Triggered, this, &ASkateCharacter::OnTurnLeft);
         EnhancedInput->BindAction(TurnRightAction, ETriggerEvent::Triggered, this, &ASkateCharacter::OnTurnRight);
         EnhancedInput->BindAction(JumpAction, ETriggerEvent::Started, this, &ASkateCharacter::OnJump);
-
-        EnhancedInput->BindAction(TestAction, ETriggerEvent::Triggered, this, &ASkateCharacter::Restart);
 
     }
 
