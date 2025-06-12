@@ -34,12 +34,9 @@ void AObstacle::BeginPlay()
     if (TriggerVolume)
     {
         TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &AObstacle::OnOverlapBegin);
-        UE_LOG(LogTemp, Warning, TEXT("Overlap event bound successfully"));
-        UE_LOG(LogTemp, Warning, TEXT("TriggerVolume generates overlaps: %s"), TriggerVolume->GetGenerateOverlapEvents() ? TEXT("Yes") : TEXT("No"));
-        UE_LOG(LogTemp, Warning, TEXT("Collision enabled: %d"), (int32)TriggerVolume->GetCollisionEnabled());
+
 
     }
-    //AScoreManager* ScoreManager = 
 }
 
 // Called every frame
@@ -53,10 +50,9 @@ void AObstacle::Tick(float DeltaTime)
 void AObstacle::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     
-    UE_LOG(LogTemp, Warning, TEXT("Overlap detected"));
     if (!OtherActor || !bCanTrigger) return;
     
-    UE_LOG(LogTemp, Warning, TEXT("Overlap detected with: %s"), *OtherActor->GetName());
+
 
     if (OtherActor->IsA<ASkateCharacter>())
     {
@@ -68,8 +64,6 @@ void AObstacle::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor*
             if (GameMode && GameMode->ScoreManager)
             {
                 GameMode->ScoreManager->AddScore(ScoreValue);
-                UE_LOG(LogTemp, Warning, TEXT("Added %d points!"), 
-                    ScoreValue);
             }
         }
     }

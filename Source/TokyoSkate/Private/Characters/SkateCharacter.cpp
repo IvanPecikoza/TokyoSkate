@@ -48,7 +48,7 @@ ASkateCharacter::ASkateCharacter()
 
 }
 
-void ASkateCharacter::TestRawInput()
+void ASkateCharacter::Restart()
 {
     UE_LOG(LogTemp, Warning, TEXT("ENHANCED INPUT WORKING"));
     GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("INPUT CONFIRMED"));
@@ -85,7 +85,6 @@ void ASkateCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		}
 	}
 
-    UE_LOG(LogTemp, Warning, TEXT("Input Component Class: %s"), *PlayerInputComponent->GetClass()->GetName());
 
     if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
     {
@@ -99,9 +98,8 @@ void ASkateCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
         EnhancedInput->BindAction(TurnRightAction, ETriggerEvent::Triggered, this, &ASkateCharacter::OnTurnRight);
         EnhancedInput->BindAction(JumpAction, ETriggerEvent::Started, this, &ASkateCharacter::OnJump);
 
-        EnhancedInput->BindAction(TestAction, ETriggerEvent::Triggered, this, &ASkateCharacter::TestRawInput);
+        EnhancedInput->BindAction(TestAction, ETriggerEvent::Triggered, this, &ASkateCharacter::Restart);
 
-        UE_LOG(LogTemp, Warning, TEXT("Enhanced Input bindings initialized!"));
     }
 
 }
@@ -113,7 +111,7 @@ void ASkateCharacter::OnBoostStarted()
     CurrentBoostHoldTime = 0.f;
     GetWorld()->GetTimerManager().SetTimer(BoostHoldTimer, [this]()
         {
-            CurrentBoostHoldTime += 0.1f; // Update every 0.1 seconds
+            CurrentBoostHoldTime += 0.1f;
         }, 0.1f, true);
     
 }
@@ -143,7 +141,7 @@ void ASkateCharacter::OnBoostEnded()
         const FVector ClampedImpulse = BoostImpulse * FMath::Max(0, ReductionFactor);
 
         GetCharacterMovement()->AddImpulse(ClampedImpulse, true);
-        UE_LOG(LogTemp, Warning, TEXT("Boost clamped to avoid overspeed! Applied: %.1f"), ClampedImpulse.Size());
+        
     }
     else
     {
@@ -196,15 +194,6 @@ void ASkateCharacter::OnStartBreaking()
         true
     );
 
-    // Auto-stop timer
-    /*GetWorld()->GetTimerManager().SetTimer(
-        BreakingCooldownTimer,
-        [this]() {
-            StopBreaking();
-        },
-        ActualBreakingTime,
-        false
-    );*/
 }
 
 void ASkateCharacter::OnStopBreaking()
@@ -250,7 +239,7 @@ void ASkateCharacter::OnTurnRight()
 
 void ASkateCharacter::HandleTurning(float TurnInput)
 {
-    //if (GetCharacterMovement()->IsMovingOnGround())
+
     {
         const FVector AdjustedVelocity = GetActorForwardVector() * GetVelocity().Size2D();
         GetCharacterMovement()->Velocity = FVector(
@@ -260,10 +249,7 @@ void ASkateCharacter::HandleTurning(float TurnInput)
         );
         AddControllerYawInput(TurnInput * TurnRate * GetWorld()->GetDeltaSeconds());
     }
-    //else // Air control
-    //{
-    //    AddControllerYawInput(TurnInput * TurnRate * 1.f * GetWorld()->GetDeltaSeconds());
-    //}
+
 }
 
 

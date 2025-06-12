@@ -31,6 +31,8 @@ public:
     UPROPERTY(meta = (BindWidget))
     UTextBlock* Text_Multiplier;
 
+    UPROPERTY(meta = (BindWidget))
+    UTextBlock* Text_Restart;
+
     void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-	
 };

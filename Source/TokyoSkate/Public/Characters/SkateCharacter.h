@@ -137,7 +137,7 @@ protected:
 
 	// Input handlers
 	void OnBoostStarted();
-	void TestRawInput();
+	void Restart();
 	void OnBoostEnded();
 	void OnMoveForward();
 	void OnStopMovingForward();

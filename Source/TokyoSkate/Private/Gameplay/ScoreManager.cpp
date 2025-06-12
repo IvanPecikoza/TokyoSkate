@@ -27,17 +27,20 @@ void AScoreManager::Tick(float DeltaTime)
 
 void AScoreManager::AddScore(int32 Points)
 {
-    // Reset combo timer
-    GetWorld()->GetTimerManager().ClearTimer(ComboTimerHandle);
-    GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &AScoreManager::EndCombo, 3.0f, false);
+    if (RemainingGameTime >= 0)
+    {
+        // Reset combo timer
+        GetWorld()->GetTimerManager().ClearTimer(ComboTimerHandle);
+        GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &AScoreManager::EndCombo, 3.0f, false);
 
-    // Apply score with multiplier
-    CurrentComboScore += Points * ComboMultiplier;
-    ComboMultiplier += 0.2f;
+        // Apply score with multiplier
+        CurrentComboScore += Points * ComboMultiplier;
+        ComboMultiplier += 0.2f;
 
-    OnScoreUpdated.Broadcast(CurrentComboScore, TotalScore);
+        OnScoreUpdated.Broadcast(CurrentComboScore, TotalScore);
 
-    UE_LOG(LogTemp, Warning, TEXT("Add Score Executed, total = %d"),CurrentComboScore);
+    }
+    
 }
 
 void AScoreManager::EndCombo()
@@ -58,10 +61,6 @@ void AScoreManager::UpdateGameTimer()
         GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
         EndGame();
     }
-    /*else
-    {
-        GetWorld()->GetTimerManager().SetTimer(GameTimerHandle, this, &AScoreManager::UpdateGameTimer, 1.f, true);
-    }*/
 }
 
 
