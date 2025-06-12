@@ -51,13 +51,17 @@ void AScoreManager::EndCombo()
 void AScoreManager::UpdateGameTimer()
 {
     UE_LOG(LogTemp, Warning, TEXT("Update Called"));
-    RemainingGameTime = FMath::Max(0.f, GameDuration - 1);
+    RemainingGameTime = FMath::Max(0.f, RemainingGameTime -= 1);
 
     if (RemainingGameTime <= 0.f)
     {
         GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
-        //OnGameEnded.Broadcast();
+        EndGame();
     }
+    /*else
+    {
+        GetWorld()->GetTimerManager().SetTimer(GameTimerHandle, this, &AScoreManager::UpdateGameTimer, 1.f, true);
+    }*/
 }
 
 
@@ -75,11 +79,5 @@ void AScoreManager::Init()
     StartTime = GetWorld()->GetTimeSeconds();
     RemainingGameTime = GameDuration;
 
-    GetWorld()->GetTimerManager().SetTimer(
-        GameTimerHandle,
-        this,
-        &AScoreManager::UpdateGameTimer,
-        1.f,
-        true
-    );
+    GetWorld()->GetTimerManager().SetTimer(GameTimerHandle, this, &AScoreManager::UpdateGameTimer, 1.f, true);
 }
