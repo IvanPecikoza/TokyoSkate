@@ -16,9 +16,6 @@ void AScoreManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-    GetWorld()->GetTimerManager().SetTimer(GameTimerHandle, this, &AScoreManager::EndGame, 60.0f, false);
-	
-    UE_LOG(LogTemp, Warning, TEXT("BeginPlay for Manager"));
 }
 
 // Called every frame
@@ -51,9 +48,38 @@ void AScoreManager::EndCombo()
     OnScoreUpdated.Broadcast(0, TotalScore);
 }
 
+void AScoreManager::UpdateGameTimer()
+{
+    UE_LOG(LogTemp, Warning, TEXT("Update Called"));
+    RemainingGameTime = FMath::Max(0.f, GameDuration - 1);
+
+    if (RemainingGameTime <= 0.f)
+    {
+        GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
+        //OnGameEnded.Broadcast();
+    }
+}
+
 
 void AScoreManager::EndGame()
 {
     EndCombo();
 }
 
+
+
+void AScoreManager::Init()
+{
+    UE_LOG(LogTemp, Warning, TEXT("Init for Manager"));
+
+    StartTime = GetWorld()->GetTimeSeconds();
+    RemainingGameTime = GameDuration;
+
+    GetWorld()->GetTimerManager().SetTimer(
+        GameTimerHandle,
+        this,
+        &AScoreManager::UpdateGameTimer,
+        1.f,
+        true
+    );
+}

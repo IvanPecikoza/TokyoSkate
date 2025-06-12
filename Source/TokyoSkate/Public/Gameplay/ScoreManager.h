@@ -31,6 +31,21 @@ protected:
 	FTimerHandle ComboTimerHandle;
 	FTimerHandle GameTimerHandle;
 
+
+	UPROPERTY(BlueprintReadOnly, Category = "Scoring")
+	float RemainingGameTime = 60.f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Scoring")
+	float StartTime = 0.f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Scoring")
+	float GameDuration = 60.f;
+
+
+
+	UFUNCTION()
+	void UpdateGameTimer();
+
 	void EndCombo();
 	void EndGame();
 
@@ -50,10 +65,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Scoring")
 	float GetMultiplier() const { return ComboMultiplier; }
 
-	/*UFUNCTION(BlueprintCallable, Category = "Scoring")
-	float GetRemainingGameTime() const {
-		return FMath::Max(0.f, GameTimerHandle - GetWorld()->GetTimeSeconds());
-	}*/
+	UFUNCTION(BlueprintCallable, Category = "Scoring")
+	float GetRemainingGameTime() const { return RemainingGameTime; }
+
+
+	void Init();
 
 
 };

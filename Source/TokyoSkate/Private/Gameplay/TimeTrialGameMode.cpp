@@ -9,3 +9,13 @@ ATimeTrialGameMode::ATimeTrialGameMode()
     // Create and attach ScoreManager
     ScoreManager = CreateDefaultSubobject<AScoreManager>(TEXT("ScoreManager"));
 }
+
+void ATimeTrialGameMode::BeginPlay()
+{
+    Super::BeginPlay();
+
+    if (ScoreManager)
+    {
+        ScoreManager->Init();
+    }
+}

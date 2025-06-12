@@ -20,6 +20,7 @@ void UW_SkateHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
             Text_TotalScore->SetText(FText::AsNumber(Manager->GetTotalScore()));
             Text_Current_Score->SetText(FText::AsNumber(Manager->GetCurrentComboScore()));
             Text_Multiplier->SetText(FText::AsNumber(Manager->GetMultiplier()));
+            Text_Time->SetText(FText::AsNumber((Manager->GetRemainingGameTime())));
         }
     }
 }

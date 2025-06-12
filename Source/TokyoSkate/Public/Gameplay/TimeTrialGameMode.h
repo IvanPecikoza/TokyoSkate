@@ -17,6 +17,8 @@ class TOKYOSKATE_API ATimeTrialGameMode : public AGameModeBase
 
 	ATimeTrialGameMode();
 
+	virtual void BeginPlay() override;
+
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
