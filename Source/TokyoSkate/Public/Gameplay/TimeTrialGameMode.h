@@ -17,6 +17,7 @@ class TOKYOSKATE_API ATimeTrialGameMode : public AGameModeBase
 
 	ATimeTrialGameMode();
 
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	AScoreManager* ScoreManager;

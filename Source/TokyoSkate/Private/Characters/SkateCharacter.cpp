@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include <UI/W_SkateHUD.h>
 
 // Sets default values
 ASkateCharacter::ASkateCharacter()
@@ -58,13 +59,9 @@ void ASkateCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-    if (!GetController())
+    if (HUDClass && IsPlayerControlled())
     {
-        UE_LOG(LogTemp, Error, TEXT("No controller possessing this character!"));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Controller: %s"), *GetController()->GetName());
+        CreateWidget<UUserWidget>(GetWorld(), HUDClass)->AddToViewport();
     }
 }
 

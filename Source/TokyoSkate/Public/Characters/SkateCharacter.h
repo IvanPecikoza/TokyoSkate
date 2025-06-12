@@ -130,6 +130,10 @@ protected:
 	float JumpHeight = 500.f;
 
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HUDClass;
+
+
 
 	// Input handlers
 	void OnBoostStarted();

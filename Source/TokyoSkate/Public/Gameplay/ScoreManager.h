@@ -34,8 +34,26 @@ protected:
 	void EndCombo();
 	void EndGame();
 
+	
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	// Add these getters
+	UFUNCTION(BlueprintCallable, Category = "Scoring")
+	int32 GetTotalScore() const { return TotalScore; }
+
+	UFUNCTION(BlueprintCallable, Category = "Scoring")
+	int32 GetCurrentComboScore() const { return CurrentComboScore; }
+
+	UFUNCTION(BlueprintCallable, Category = "Scoring")
+	float GetMultiplier() const { return ComboMultiplier; }
+
+	/*UFUNCTION(BlueprintCallable, Category = "Scoring")
+	float GetRemainingGameTime() const {
+		return FMath::Max(0.f, GameTimerHandle - GetWorld()->GetTimeSeconds());
+	}*/
+
 
 };
