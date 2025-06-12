@@ -133,6 +133,8 @@ void ASkateCharacter::OnBoostEnded()
 
     bCanBoost = false;
 
+    OnBoostCooldownChanged.Broadcast(true);
+
     GetWorld()->GetTimerManager().SetTimer(
         BoostCooldownTimer,
         [this]() { bCanBoost = true; OnBoostCooldownChanged.Broadcast(false); },

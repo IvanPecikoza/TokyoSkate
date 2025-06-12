@@ -79,16 +79,16 @@ protected:
 
 	// Boost params
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float BoostCooldown = 0.9f;
+	float BoostCooldown = 1.4f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float MinBoostDuration = 0.4f;
+	float MinBoostDuration = 0.6f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float MaxBoostDuration = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float BoostPower = 3000.f;
+	float BoostPower = 2400.f;
 
 
 	//Breaking params
