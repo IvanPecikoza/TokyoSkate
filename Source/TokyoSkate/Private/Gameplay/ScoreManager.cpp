@@ -18,6 +18,7 @@ void AScoreManager::BeginPlay()
 
     GetWorld()->GetTimerManager().SetTimer(GameTimerHandle, this, &AScoreManager::EndGame, 60.0f, false);
 	
+    UE_LOG(LogTemp, Warning, TEXT("BeginPlay for Manager"));
 }
 
 // Called every frame
@@ -38,6 +39,8 @@ void AScoreManager::AddScore(int32 Points)
     ComboMultiplier += 0.2f;
 
     OnScoreUpdated.Broadcast(CurrentComboScore, TotalScore);
+
+    UE_LOG(LogTemp, Warning, TEXT("Add Score Executed, total = %d"),CurrentComboScore);
 }
 
 void AScoreManager::EndCombo()

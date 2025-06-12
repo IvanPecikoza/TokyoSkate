@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "ScoreManager.h"
 #include "TimeTrialGameMode.generated.h"
 
 /**
@@ -13,5 +14,11 @@ UCLASS()
 class TOKYOSKATE_API ATimeTrialGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+
+	ATimeTrialGameMode();
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	AScoreManager* ScoreManager;
 	
 };
